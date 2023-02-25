@@ -5,10 +5,10 @@ import { Amplify } from 'aws-amplify'
 Amplify.configure({
 	aws_project_region: 'us-east-1',
 	aws_appsync_graphqlEndpoint:
-		'https://veqds4oyrvdv5aiokbvq42rwbu.appsync-api.us-east-1.amazonaws.com/graphql',
+		'https://gglnczm6z5ctfovgs5j23w6i5q.appsync-api.eu-central-1.amazonaws.com/graphql',
 	aws_appsync_region: 'us-east-1',
 	aws_appsync_authenticationType: 'API_KEY',
-	aws_appsync_apiKey: 'da2-r5l44a3axfeipas2eov4sndfdi',
+	aws_appsync_apiKey: 'da2-ggphpypnsra43ngsaodhjqnsku',
 })
 
 function MyApp({ Component, pageProps }) {

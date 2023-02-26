@@ -1,11 +1,21 @@
 import {
 	CfnOutput,
 	Duration,
-	Expiration,
 	RemovalPolicy,
 	Stack,
 	StackProps,
 } from 'aws-cdk-lib'
+import {
+	AccountRecovery,
+	UserPool,
+	UserPoolClient,
+	VerificationEmailStyle,
+} from 'aws-cdk-lib/aws-cognito'
+
+import {
+	IdentityPool,
+	UserPoolAuthenticationProvider,
+} from '@aws-cdk/aws-cognito-identitypool-alpha'
 import { AttributeType, BillingMode, Table } from 'aws-cdk-lib/aws-dynamodb'
 import {
 	AppsyncFunction,
@@ -28,6 +38,41 @@ export class GuestUserStack extends Stack {
 	constructor(scope: Construct, id: string, props?: StackProps) {
 		super(scope, id, props)
 
+		// create the user pool
+		const userPool = new UserPool(this, 'UserDemoPool', {
+			selfSignUpEnabled: true,
+			accountRecovery: AccountRecovery.PHONE_AND_EMAIL,
+			userVerification: {
+				emailStyle: VerificationEmailStyle.CODE,
+			},
+			autoVerify: {
+				email: true,
+			},
+			standardAttributes: {
+				email: {
+					required: true,
+					mutable: true,
+				},
+			},
+		})
+
+		// create the user pool client for the frontend
+		const userPoolClient = new UserPoolClient(this, 'UserListPoolClient', {
+			userPool,
+		})
+
+		// create the identity pool
+		const identityPool = new IdentityPool(this, 'IdentityDemoPool', {
+			identityPoolName: 'identityDemoForUserData',
+			allowUnauthenticatedIdentities: true,
+			authenticationProviders: {
+				userPools: [
+					new UserPoolAuthenticationProvider({ userPool, userPoolClient }),
+				],
+			},
+		})
+
+		// create the dynamodb table
 		const userTable = new Table(this, 'UsersAPITable', {
 			removalPolicy: RemovalPolicy.DESTROY,
 			billingMode: BillingMode.PAY_PER_REQUEST,
@@ -39,14 +84,25 @@ export class GuestUserStack extends Stack {
 			schema: SchemaFile.fromAsset(path.join(__dirname, 'schema.graphql')),
 			authorizationConfig: {
 				defaultAuthorization: {
-					authorizationType: AuthorizationType.API_KEY,
+					authorizationType: AuthorizationType.USER_POOL,
+					userPoolConfig: {
+						userPool,
+					},
 				},
+				additionalAuthorizationModes: [
+					{
+						authorizationType: AuthorizationType.IAM,
+					},
+				],
 			},
 			logConfig: {
 				fieldLogLevel: FieldLogLevel.ALL,
 			},
 			xrayEnabled: true,
 		})
+
+		// allow unauthenticated access to the `listUsers` query
+		api.grantQuery(identityPool.unauthenticatedRole, 'listUsers')
 
 		// Create the AppSync function
 		const listUsersFunction = new AppsyncFunction(this, 'listUsersFunction', {
@@ -79,8 +135,9 @@ export class GuestUserStack extends Stack {
 			pipelineConfig: [listUsersFunction],
 		})
 
+		// create a lambda
 		const addUserLambda = new Function(this, 'addUserFunction', {
-			runtime: Runtime.NODEJS_16_X,
+			runtime: Runtime.NODEJS_18_X,
 			handler: 'index.main',
 			code: Code.fromAsset(path.join(__dirname, 'functions/addUserLambda')),
 			environment: {
@@ -88,11 +145,26 @@ export class GuestUserStack extends Stack {
 			},
 		})
 
+		// give the lambda permission to write to DynamoDB
 		userTable.grantWriteData(addUserLambda)
 
+		//Create a schedule so that the Lambda gets triggered every 5 minutes
 		new Rule(this, 'addUserRule', {
 			schedule: Schedule.rate(Duration.minutes(5)),
 			targets: [new LambdaFunction(addUserLambda)],
+		})
+
+		// output these variables. The frontend needs some of these. See deploy script in package.json
+		new CfnOutput(this, 'UserPoolId', {
+			value: userPool.userPoolId,
+		})
+
+		new CfnOutput(this, 'UserPoolClientId', {
+			value: userPoolClient.userPoolClientId,
+		})
+
+		new CfnOutput(this, 'IdentityPoolId', {
+			value: identityPool.identityPoolId,
 		})
 
 		new CfnOutput(this, 'GraphQLAPIID', {
@@ -101,10 +173,6 @@ export class GuestUserStack extends Stack {
 
 		new CfnOutput(this, 'GraphQLURL', {
 			value: api.graphqlUrl,
-		})
-
-		new CfnOutput(this, 'GraphQLAPIKey', {
-			value: api.apiKey || '',
 		})
 	}
 }

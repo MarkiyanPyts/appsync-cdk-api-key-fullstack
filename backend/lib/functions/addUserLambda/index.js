@@ -1,8 +1,16 @@
-const AWS = require('aws-sdk')
-const docClient = new AWS.DynamoDB.DocumentClient()
-const fetch = require('node-fetch')
+/*global fetch*/
 
-async function main(event) {
+// bring in the aws-sdkv3
+import { DynamoDBDocumentClient, PutCommand } from '@aws-sdk/lib-dynamodb'
+// bring in an adapter to help convert json to dynamodbJSON
+import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
+
+// construct the dynamodb client
+const client = new DynamoDBClient({})
+// add the adapter to the dynamodb client
+const ddbDocClient = DynamoDBDocumentClient.from(client)
+
+export async function main(event) {
 	// call the API
 	const res = await fetch('https://randomuser.me/api/')
 	const { results } = await res.json()
@@ -21,7 +29,7 @@ async function main(event) {
 
 	//try to add to the DB, otherwise throw an error
 	try {
-		await docClient.put(params).promise()
+		await ddbDocClient.send(new PutCommand(params))
 		return {
 			body: 'success!',
 		}
@@ -31,5 +39,3 @@ async function main(event) {
 		}
 	}
 }
-
-module.exports = { main }

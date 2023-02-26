@@ -5,6 +5,7 @@
 		"guest-user-backend": "bin/guest-user-backend.js"
 	},
 	"scripts": {
+		"deploy": "npx aws-cdk deploy --outputs-file ./frontend-config.json",
 		"build": "tsc",
 		"watch": "tsc -w",
 		"test": "jest",
@@ -18,6 +19,7 @@
 		"typescript": "4.9.4"
 	},
 	"dependencies": {
+		"@aws-cdk/aws-cognito-identitypool-alpha": "^2.60.0-alpha.0",
 		"aws-cdk-lib": "2.60.0",
 		"constructs": "^10.1.217",
 		"source-map-support": "^0.5.21"

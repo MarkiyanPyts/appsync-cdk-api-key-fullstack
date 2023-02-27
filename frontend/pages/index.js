@@ -26,23 +26,24 @@ const fetchUsersQuery = `
     }
   }
 `
-function Home({ users = [], nextToken }) {
+export default function Home({ users = [], nextToken }) {
 	const [pageTokens, setPageTokens] = useState([nextToken])
-	const [currentPageIndex, setCurrentPageIndex] = useState(1)
+	const [currentPageNumber, setCurrentPageNumber] = useState(1)
 	const [hasMorePages, setHasMorePages] = useState(true)
 	const [profileUsers, setProfileUsers] = useState(users)
 
 	const handleNextPage = async () => {
-		if (hasMorePages && currentPageIndex === pageTokens.length) {
+		if (hasMorePages) {
+			const currToken = pageTokens[currentPageNumber - 1]
 			const {
 				data: { listUsers },
 			} = await API.graphql({
 				query: fetchUsersQuery,
-				// authMode: 'AWS_IAM',
 				variables: {
 					limit: 5,
-					nextToken: pageTokens[currentPageIndex - 1],
+					nextToken: currToken,
 				},
+				authMode: 'AWS_IAM',
 			})
 
 			const { nextToken, items } = listUsers
@@ -51,11 +52,36 @@ function Home({ users = [], nextToken }) {
 				setHasMorePages(false)
 			}
 			setProfileUsers(items)
-			setPageTokens([...pageTokens, nextToken])
+
+			if (currentPageNumber < pageTokens.length) {
+				setCurrentPageNumber(currentPageNumber + 1)
+			}
+
+			if (currentPageNumber === pageTokens.length) {
+				setCurrentPageNumber(currentPageNumber + 1)
+				setPageTokens([...pageTokens, nextToken])
+			}
 		}
-		setCurrentPageIndex(currentPageIndex + 1)
 	}
 
+	const handlePrevPage = async () => {
+		const prevToken = pageTokens[currentPageNumber - 2]
+		const isFirstPage = currentPageNumber - 2 === 0
+		const {
+			data: { listUsers },
+		} = await API.graphql({
+			query: fetchUsersQuery,
+			variables: {
+				limit: 5,
+				nextToken: isFirstPage ? null : prevToken,
+			},
+			authMode: 'AWS_IAM',
+		})
+		const { items } = listUsers
+		console.log(items)
+		setProfileUsers(items)
+		setCurrentPageNumber(currentPageNumber - 1)
+	}
 	return (
 		<Flex direction={'column'}>
 			<Heading textAlign={'center'} level={2}>
@@ -74,25 +100,25 @@ function Home({ users = [], nextToken }) {
 				</Flex>
 			</View>
 			<Pagination
-				currentPage={currentPageIndex}
+				currentPage={currentPageNumber}
 				totalPages={pageTokens.length}
 				hasMorePages={hasMorePages}
 				onNext={handleNextPage}
-				onPrevious={() => setCurrentPageIndex(currentPageIndex - 1)}
+				onPrevious={handlePrevPage}
 				onChange={(pageIndex) => setCurrentPageIndex(pageIndex)}
 			/>
 		</Flex>
 	)
 }
 
-export default withAuthenticator(Home)
-
 export async function getStaticProps() {
 	const { data } = await API.graphql({
 		query: fetchUsersQuery,
 		variables: { limit: 5 },
-		// authMode: 'AWS_IAM',
+		authMode: 'AWS_IAM',
 	})
+
+	console.log('the data', data)
 
 	return {
 		props: {

@@ -40,11 +40,12 @@ export default function Home({ users = [], nextToken }) {
 			} = await API.graphql({
 				query: fetchUsersQuery,
 				variables: {
-					limit: 5,
-					nextToken: currToken,
+				  limit: 5,
+				  nextToken: currToken,
 				},
-				authMode: 'AWS_IAM',
-			})
+				//authMode: 'AWS_IAM', // remove this line
+			  })
+			
 
 			const { nextToken, items } = listUsers
 
@@ -105,7 +106,9 @@ export default function Home({ users = [], nextToken }) {
 				hasMorePages={hasMorePages}
 				onNext={handleNextPage}
 				onPrevious={handlePrevPage}
-				onChange={(pageIndex) => setCurrentPageIndex(pageIndex)}
+				onChange={(pageIndex) => {
+					setCurrentPageNumber(pageIndex)
+				}}
 			/>
 		</Flex>
 	)

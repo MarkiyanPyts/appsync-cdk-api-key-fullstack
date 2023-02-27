@@ -4,14 +4,14 @@ type Query {
 		@aws_cognito_user_pools
 }
 
-type User @aws_iam {
+type User @aws_iam @aws_cognito_user_pools {
 	userId: ID!
 	firstname: String!
 	lastname: String!
 	picture: AWSURL!
 }
 
-type UserConnection @aws_iam {
+type UserConnection @aws_iam @aws_cognito_user_pools {
 	items: [User!]
 	nextToken: String
 }

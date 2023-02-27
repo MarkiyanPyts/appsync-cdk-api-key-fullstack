@@ -1,6 +1,7 @@
 import { AmplifyProvider } from '@aws-amplify/ui-react'
 import '@aws-amplify/ui-react/styles.css'
 import { Amplify } from 'aws-amplify'
+import { Authenticator, useAuthenticator, CheckboxField, TextField } from '@aws-amplify/ui-react';
 
 Amplify.configure({
 	Auth: {
@@ -19,9 +20,53 @@ Amplify.configure({
 
 function MyApp({ Component, pageProps }) {
 	return (
-		<AmplifyProvider>
+		<Authenticator components={{
+			SignUp: {
+			  FormFields() {
+				const { validationErrors } = useAuthenticator();
+	
+				return (
+				  <>
+					<TextField
+					  type={'email'}
+					  descriptiveText="Email"
+					  placeholder="Enter Email"
+					  required={true}
+					  name="email"
+					  errorMessage="There is an error"
+					/>
+					{/* Re-use default `Authenticator.SignUp.FormFields` */}
+					<Authenticator.SignUp.FormFields />
+	
+					{/* Append & require Terms & Conditions field to sign up  */}
+					<CheckboxField
+					  errorMessage={validationErrors.acknowledgement}
+					  hasError={!!validationErrors.acknowledgement}
+					  name="acknowledgement"
+					  value="yes"
+					  label="I agree with the Terms & Conditions"
+					/>
+				  </>
+				);
+			  },
+			},
+		  }}
+		  services={{
+			async validateCustomSignUp(formData) {
+			  if (!formData.acknowledgement) {
+				return {
+				  acknowledgement: 'You must agree to the Terms & Conditions',
+				};
+			  }
+			},
+		  }}>
+		{({ signOut, user }) => (
+		  <>
 			<Component {...pageProps} />
-		</AmplifyProvider>
+		  </>
+		  
+		)}
+		</Authenticator>
 	)
 }
 

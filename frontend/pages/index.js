@@ -76,7 +76,7 @@ export default function Home({ users = [], nextToken }) {
 				limit: 5,
 				nextToken: isFirstPage ? null : prevToken,
 			},
-			authMode: 'AWS_IAM',
+			//authMode: 'AWS_IAM',
 		})
 		const { items } = listUsers
 		console.log(items)

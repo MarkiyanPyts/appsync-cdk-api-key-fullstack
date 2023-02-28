@@ -1,6 +1,4 @@
 *.js
-!**/addUserLambda/index.js
-!**/mappings/*
 !jest.config.js
 *.d.ts
 node_modules

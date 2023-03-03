@@ -1,27 +1,27 @@
 {
   "ProductAuthStack": {
-    "UserPoolClientId": "2becm8seaiol1gdr3uvr4i8bue",
-    "UserPoolId": "us-east-1_KcRwIEqwx",
-    "ExportsOutputRefProductUserpoolClientB575D22F96B1DF2B": "2becm8seaiol1gdr3uvr4i8bue",
-    "ExportsOutputRefProductUserpoolCCF86EC0B008D6D1": "us-east-1_KcRwIEqwx"
+    "UserPoolClientId": "1n231b393ibrrd1jlcmbb4v6fb",
+    "UserPoolId": "eu-central-1_BIdsMLgSn",
+    "ExportsOutputRefProductUserpoolClientB575D22F96B1DF2B": "1n231b393ibrrd1jlcmbb4v6fb",
+    "ExportsOutputRefProductUserpoolCCF86EC0B008D6D1": "eu-central-1_BIdsMLgSn"
   },
   "ProductDatabaseStack": {
-    "ExportsOutputFnGetAttProductTableB8D4E9EDArn9E8D595F": "arn:aws:dynamodb:us-east-1:521776702104:table/ProductDatabaseStack-ProductTableB8D4E9ED-1R7CGWF82FZIR",
-    "ExportsOutputRefProductTableB8D4E9ED1EF21745": "ProductDatabaseStack-ProductTableB8D4E9ED-1R7CGWF82FZIR"
+    "ExportsOutputFnGetAttProductTableB8D4E9EDArn9E8D595F": "arn:aws:dynamodb:eu-central-1:501486418455:table/ProductDatabaseStack-ProductTableB8D4E9ED-1SYEH4PFT4FKC",
+    "ExportsOutputRefProductTableB8D4E9ED1EF21745": "ProductDatabaseStack-ProductTableB8D4E9ED-1SYEH4PFT4FKC"
   },
   "ProductAppSyncAPIStack": {
-    "GraphQLAPIID": "7w7n2gaksnhirkx4rumhhhyt6u",
-    "ExportsOutputFnGetAttAPISamples780B5D88ApiId3077EBEE": "7w7n2gaksnhirkx4rumhhhyt6u",
-    "GraphQLAPIURL": "https://ulgcri74prestbdtt72nm3wpeq.appsync-api.us-east-1.amazonaws.com/graphql"
+    "GraphQLAPIID": "nwc4l6ydkzfjhlywpfjsnmnmaa",
+    "ExportsOutputFnGetAttAPISamples780B5D88ApiId3077EBEE": "nwc4l6ydkzfjhlywpfjsnmnmaa",
+    "GraphQLAPIURL": "https://g7hio3ov5vfw3hixouz7wbzg6y.appsync-api.eu-central-1.amazonaws.com/graphql"
   },
   "ProductIdentityStack": {
-    "ExportsOutputRefProductIdentityPoolUnauthenticatedRoleB676000166F601AC": "ProductIdentityStack-ProductIdentityPoolUnauthenti-LLK9490NRVHR",
-    "ExportsOutputRefProductIdentityPoolAuthenticatedRole7D70DE74DB087A5A": "ProductIdentityStack-ProductIdentityPoolAuthentica-TPQ7KG0YGD2A",
-    "IdentityPoolId": "us-east-1:ca5a162a-8e93-4847-9864-1f1fef1c7d9b"
+    "ExportsOutputRefProductIdentityPoolUnauthenticatedRoleB676000166F601AC": "ProductIdentityStack-ProductIdentityPoolUnauthenti-C5XDEW14CDCD",
+    "ExportsOutputRefProductIdentityPoolAuthenticatedRole7D70DE74DB087A5A": "ProductIdentityStack-ProductIdentityPoolAuthentica-XDZA7DPF38N4",
+    "IdentityPoolId": "eu-central-1:4e21e0c5-4818-4ea8-b61b-2fd621f7747f"
   },
   "ProductFileStorageStack": {
-    "BucketName": "productfilestoragestack-productbucket674e806c-vu5bd2brtrhy",
-    "BucketRegion": "us-east-1",
-    "distDomainName": "d1aiv8f5ptrlie.cloudfront.net"
+    "BucketName": "productfilestoragestack-productbucket674e806c-1dp5jbkeuj85q",
+    "BucketRegion": "eu-central-1",
+    "distDomainName": "d3ny89bj1uj5vg.cloudfront.net"
   }
 }

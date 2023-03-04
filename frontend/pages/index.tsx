@@ -38,7 +38,8 @@ function Home() {
 			const liveProducts = res.filter((product) => product.isLive)
 			for (const liveProduct of liveProducts) {
 				// Assign url to be public cloudfront
-				const displayURL = `https://d1aiv8f5ptrlie.cloudfront.net/${liveProduct.imgKey}`
+				console.log("new", liveProduct)
+				const displayURL = `https://d3ny89bj1uj5vg.cloudfront.net/${liveProduct.imgKey}`
 
 				publicProductsWithURL.push({
 					...liveProduct,

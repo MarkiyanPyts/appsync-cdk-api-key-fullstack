@@ -79,7 +79,7 @@ function Admin() {
 
 	//create a draft post
 	const handleSubmit = async (values: AmplifyFormTypes) => {
-		console.log(values)
+		console.log("postVals:", values)
 
 		const res = await API.graphql({
 			query: createProduct,
